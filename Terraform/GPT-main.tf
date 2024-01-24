@@ -12,7 +12,9 @@ resource "kubernetes_persistent_volume" "mariadb_data" {
     access_modes = ["ReadWriteOnce"]
 
     persistent_volume_source {
-      path = "/path/to/minikube-hostpath/mariadb_data"  # Update with your desired host path
+      host_path {
+        path = "/data/mariadb_data"
+      }
     }
   }
 }
@@ -30,7 +32,9 @@ resource "kubernetes_persistent_volume" "opencart_data" {
     access_modes = ["ReadWriteOnce"]
 
     persistent_volume_source {
-      path = "/path/to/minikube-hostpath/opencart_data"  # Update with your desired host path
+      host_path {
+        path = "/data/opencart_data"
+      }
     }
   }
 }
@@ -48,7 +52,9 @@ resource "kubernetes_persistent_volume" "opencart_storage_data" {
     access_modes = ["ReadWriteOnce"]
 
     persistent_volume_source {
-      path = "/path/to/minikube-hostpath/opencart_storage_data"  # Update with your desired host path
+      host_path {
+        path = "/data/opencart_storage_data"
+      }
     }
   }
 }
