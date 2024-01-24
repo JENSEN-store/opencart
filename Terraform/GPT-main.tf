@@ -12,7 +12,7 @@ resource "kubernetes_persistent_volume" "mariadb_data" {
     access_modes = ["ReadWriteOnce"]
 
     persistent_volume_source {
-      host_path {
+      local {
         path = "/data/mariadb_data"
       }
     }
@@ -32,7 +32,7 @@ resource "kubernetes_persistent_volume" "opencart_data" {
     access_modes = ["ReadWriteOnce"]
 
     persistent_volume_source {
-      host_path {
+      local {
         path = "/data/opencart_data"
       }
     }
@@ -52,7 +52,7 @@ resource "kubernetes_persistent_volume" "opencart_storage_data" {
     access_modes = ["ReadWriteOnce"]
 
     persistent_volume_source {
-      host_path {
+      local {
         path = "/data/opencart_storage_data"
       }
     }
