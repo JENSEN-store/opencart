@@ -32,7 +32,7 @@ jobs:
           echo "Current version: ${{ env.current_version }}"
       - name: Generate Modified Deployment YAML
         run: |
-          sed -e "s/my-service00-deployment:${{ env.current_version }}/g" deployment-minikube.yml > modified-deployment-minikube.yaml
+          sed -e "s/my-service00-deployment:${{ env.current_version }}/g" deployment-minikube.yml > modified-deployment-minikube.yml
       - name: Print docker images
         run: |
           eval $(minikube -p minikube docker-env)
