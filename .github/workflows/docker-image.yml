@@ -61,5 +61,5 @@ jobs:
         run: |
           echo "Sending build logs to Discord..."
           curl -X POST -H "Content-Type: application/json" -d '{
-            "content": "Build Status: ${{ job.status }}\nCommit: ${{ github.sha }}\nRepository: ${{ github.repository }}\nWorkflow Run ID: ${{ github.run_id }}\n\nDetails:\n- This build was ${{ job.status }}.\n\n```\n${{ steps.build.outputs.output }}\n```\n\nGitHub Actions build OPENCART STORE!"
+            "content": "Build Status: ${{ job.status }}\nCommit: ${{ github.sha }}\nRepository: ${{ github.repository }}\nWorkflow Run ID: ${{ github.run_id }}\n\nDetails:\n- This build was ${{ job.status }}.\n\n```\n${{ steps.build.output }}\n```\n\nGitHub Actions build OPENCART STORE!"
           }' ${{ secrets.DISCORD_WEBHOOK_URL }}
