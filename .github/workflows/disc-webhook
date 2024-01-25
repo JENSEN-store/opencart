@@ -13,16 +13,40 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      # Add your build steps here
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build > build_output.txt 2>&1 || true
 
   notify-discord:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Notify Discord on Failure
-        if: failure()
+      - name: Notify Discord
+        if: always()  # This step runs always, regardless of the build result
         uses: discord-actions/discord-webhook@v1
         with:
           url: ${{ secrets.DISC_WEBHOOK }}
-          content: "❌ Build failed! Check the error logs for details."
+          content: |
+            Build Status: ${{ job.status }}
+            
+            Commit: ${{ github.sha }}
+            Repository: ${{ github.repository }}
+            Workflow Run ID: ${{ github.run_id }}
+
+            Details:
+            - This build was ${{ job.status }}.
+
+            Error Logs:
+            ```
+            $(cat build_output.txt)
+            ```
+
+            Thank you for using GitHub Actions!
