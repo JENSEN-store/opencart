@@ -64,3 +64,4 @@ jobs:
           curl -X POST -H "Content-Type: application/json" -d '{
             "content": "Build Status: ${{ job.status }}\nCommit: ${{ github.sha }}\nRepository: ${{ github.repository }}\nWorkflow Run ID: ${{ github.run_id }}\n\nDetails:\n- This build was ${{ job.status }}.\n\nBuild Output:\n```\n'"${output}"'\n```\n\nThank you for using GitHub Actions!"
           }' ${{ secrets.DISCORD_WEBHOOK_URL }}
+       
