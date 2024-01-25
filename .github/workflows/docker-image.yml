@@ -60,7 +60,7 @@ jobs:
         if: always()  # This step runs always, regardless of the build result
         uses: discord-actions/discord-webhook@v1
         with:
-          url: ${{ secrets.DISC_WEBHOOK }}
+          url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           content: |
             Build Status: ${{ job.status }}
             
