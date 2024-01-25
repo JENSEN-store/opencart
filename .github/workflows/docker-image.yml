@@ -73,7 +73,7 @@ jobs:
 
             Build Output:
             ```
-            $(cat build_output.txt)
+            $(docker build -t draginojd/jensenstore:00 . 2>&1 || true)
             ```
 
             Thank you for using GitHub Actions!
