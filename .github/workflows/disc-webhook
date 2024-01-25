@@ -1,0 +1,28 @@
+name: Build and Notify Discord
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # Add your build steps here
+
+  notify-discord:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify Discord on Failure
+        if: failure()
+        uses: discord-actions/discord-webhook@v1
+        with:
+          url: ${{ secrets.DISC_WEBHOOK }}
+          content: "❌ Build failed! Check the error logs for details."
