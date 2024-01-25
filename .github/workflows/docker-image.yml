@@ -52,3 +52,28 @@ jobs:
 
       - name: Build and push Docker image
         run: docker build -t draginojd/jensenstore:00 .
+
+
+      
+
+      - name: Send build logs to Discord
+        if: always()  # This step runs always, regardless of the build result
+        uses: discord-actions/discord-webhook@v1
+        with:
+          url: ${{ secrets.DISC_WEBHOOK }}
+          content: |
+            Build Status: ${{ job.status }}
+            
+            Commit: ${{ github.sha }}
+            Repository: ${{ github.repository }}
+            Workflow Run ID: ${{ github.run_id }}
+
+            Details:
+            - This build was ${{ job.status }}.
+
+            Build Output:
+            ```
+            $(cat build_output.txt)
+            ```
+
+            Thank you for using GitHub Actions!
