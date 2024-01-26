@@ -19,7 +19,7 @@ resource "kubernetes_persistent_volume" "mariadb_data" {
       storage = "5Gi"
     }
 
-    access_modes = ["ReadWriteOnce"]
+    access_modes = ["ReadWriteMany"]
 
     persistent_volume_source {
       local {
@@ -49,7 +49,7 @@ resource "kubernetes_persistent_volume" "opencart_data" {
       storage = "5Gi"
     }
 
-    access_modes = ["ReadWriteOnce"]
+    access_modes = ["ReadWriteMany"]
 
     persistent_volume_source {
       local {
@@ -79,7 +79,7 @@ resource "kubernetes_persistent_volume" "opencart_storage_data" {
       storage = "5Gi"
     }
 
-    access_modes = ["ReadWriteOnce"]
+    access_modes = ["ReadWriteMany"]
 
     persistent_volume_source {
       local {
@@ -96,7 +96,7 @@ resource "kubernetes_persistent_volume_claim" "mariadb_data" {
   }
 
   spec {
-    access_modes = ["ReadWriteOnce"]
+    access_modes = ["ReadWriteMany"]
     resources {
       requests = {
         storage = "1Gi"
@@ -111,7 +111,7 @@ resource "kubernetes_persistent_volume_claim" "opencart_data" {
   }
 
   spec {
-    access_modes = ["ReadWriteOnce"]
+    access_modes = ["ReadWriteMany"]
     resources {
       requests = {
         storage = "5Gi"
@@ -126,7 +126,7 @@ resource "kubernetes_persistent_volume_claim" "opencart_storage_data" {
   }
 
   spec {
-    access_modes = ["ReadWriteOnce"]
+    access_modes = ["ReadWriteMany"]
     resources {
       requests = {
         storage = "5Gi"
