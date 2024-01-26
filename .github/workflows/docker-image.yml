@@ -35,7 +35,7 @@ jobs:
         run: |
           echo "current_version=$(grep '# version' version.md | cut -d ' ' -f3)" >> $GITHUB_ENV
           echo "Current version: ${{ env.current_version }}"
-          
+
       - name: Generate Modified Deployment YAML
         run: |
           sed -e "s/my-service00-deployment:/my-service:${{ env.current_version }}/g" deployment-minikube.yml > modified-deployment-minikube.yml
@@ -56,7 +56,13 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
-        run: docker build -t draginojd/jensenstore:00 .
+        id: build
+        run: |
+          echo "Building Docker image..."
+          output=$(docker build -t draginojd/jensenstore:00 . 2>&1) || true
+          echo "::set-output name=output::$output"
+
+        #run: docker build -t draginojd/jensenstore:00 .
 
 
       
