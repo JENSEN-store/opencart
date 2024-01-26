@@ -3,7 +3,7 @@ name: Cypress End-to-End Tests
 on:
   push:
     branches:
-      - main
+      - cypress-test
 
 jobs:
   cypress-tests:
