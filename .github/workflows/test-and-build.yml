@@ -1,0 +1,87 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  cypress-tests:
+    runs-on: ubuntu-latest
+    services:
+      opencart:
+        image: docker.io/bitnami/opencart:4
+        ports:
+          - 8080:8080
+        env:
+          OPENCART_HOST: localhost
+          OPENCART_DATABASE_HOST: mariadb
+          OPENCART_DATABASE_PORT_NUMBER: 3306
+          OPENCART_DATABASE_USER: bn_opencart
+          OPENCART_DATABASE_NAME: bitnami_opencart
+          ALLOW_EMPTY_PASSWORD: yes
+
+      mariadb:
+        image: docker.io/bitnami/mariadb:11.2
+        env:
+          ALLOW_EMPTY_PASSWORD: yes
+          MARIADB_USER: bn_opencart
+          MARIADB_DATABASE: bitnami_opencart
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+
+  build_and_push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Start minikube
+        uses: medyagh/setup-minikube@master
+        id: minikube
+        with:
+          driver: docker
+          wait: all
+      - name: Try the cluster
+        run: kubectl get pods -A
+      - name: Setup Docker environment
+        run: |
+          export SHELL=/bin/bash
+          eval $(minikube -p minikube docker-env)
+      - name: Print current app version
+        run: |
+          echo "current_version=$(grep '# version' version.md | cut -d ' ' -f3)" >> $GITHUB_ENV
+          echo "Current version: ${{ env.current_version }}"
+      - name: Generate Modified Deployment YAML
+        run: |
+          sed -e "s/my-service00-deployment:/my-service:${{ env.current_version }}/g" deployment-minikube.yml > modified-deployment-minikube.yml
+
+      - name: Print Docker Images
+        run: |
+          eval $(minikube -p minikube docker-env)
+          docker images
+        shell: bash
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v1.6.0 # Use the latest version
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1.10.0 # Use the latest version
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        run: docker build -t draginojd/jensenstore:00 .
+
+      - name: Send build logs to Discord
+        if: always()
+        run: |
+          echo "Sending build logs to Discord..."
+          curl -X POST -H "Content-Type: application/json" -d '{
+            "content": "Build Status: ${{ job.status }}\nCommit: ${{ github.sha }}\nRepository: ${{ github.repository }}\nWorkflow Run ID: ${{ github.run_id }}\n\nDetails:\n- This build was ${{ job.status }}.\n\n```\n${{ steps.build.output }}\n```\n\nGitHub Actions build OPENCART STORE!"
+          }' ${{ secrets.DISCORD_WEBHOOK_URL }}
