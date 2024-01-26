@@ -1,0 +1,37 @@
+name: Cypress End-to-End Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  cypress-tests:
+    runs-on: ubuntu-latest
+    services:
+      opencart:
+        image: docker.io/bitnami/opencart:4
+        ports:
+          - 8080:8080
+        env:
+          OPENCART_HOST: localhost
+          OPENCART_DATABASE_HOST: mariadb
+          OPENCART_DATABASE_PORT_NUMBER: 3306
+          OPENCART_DATABASE_USER: bn_opencart
+          OPENCART_DATABASE_NAME: bitnami_opencart
+          ALLOW_EMPTY_PASSWORD: yes
+
+      mariadb:
+        image: docker.io/bitnami/mariadb:11.2
+        env:
+          ALLOW_EMPTY_PASSWORD: yes
+          MARIADB_USER: bn_opencart
+          MARIADB_DATABASE: bitnami_opencart
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      # Install npm dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v6

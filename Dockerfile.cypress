@@ -1,0 +1,20 @@
+# Use an image that has Node.js and other dependencies
+FROM cypress/base:14
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the package.json and package-lock.json files
+COPY package*.json ./
+
+# Install Cypress dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose the port if needed
+# EXPOSE 8080
+
+# Command to run Cypress tests
+CMD ["npm", "run", "cypress:run"]
