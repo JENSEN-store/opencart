@@ -5,6 +5,16 @@ resource "kubernetes_persistent_volume" "mariadb_data" {
   }
 
   spec {
+    node_affinity {
+      required {
+        node_selector_term {
+          match_expressions {
+            key = "name"
+            operator = "Exists"
+          }
+        }
+      }
+    }
     capacity = {
       storage = "5Gi"
     }
@@ -13,7 +23,7 @@ resource "kubernetes_persistent_volume" "mariadb_data" {
 
     persistent_volume_source {
       local {
-        path = "/data/mariadb_data"
+        path = "/mnt/data/mariadb_data"
       }
     }
   }
@@ -25,6 +35,16 @@ resource "kubernetes_persistent_volume" "opencart_data" {
   }
 
   spec {
+    node_affinity {
+      required {
+        node_selector_term {
+          match_expressions {
+            key = "name"
+            operator = "Exists"
+          }
+        }
+      }
+    }
     capacity = {
       storage = "5Gi"
     }
@@ -33,7 +53,7 @@ resource "kubernetes_persistent_volume" "opencart_data" {
 
     persistent_volume_source {
       local {
-        path = "/data/opencart_data"
+        path = "/mnt/data/opencart_data"
       }
     }
   }
@@ -45,6 +65,16 @@ resource "kubernetes_persistent_volume" "opencart_storage_data" {
   }
 
   spec {
+    node_affinity {
+      required {
+        node_selector_term {
+          match_expressions {
+            key = "name"
+            operator = "Exists"
+          }
+        }
+      }
+    }
     capacity = {
       storage = "5Gi"
     }
@@ -53,7 +83,7 @@ resource "kubernetes_persistent_volume" "opencart_storage_data" {
 
     persistent_volume_source {
       local {
-        path = "/data/opencart_storage_data"
+        path = "/mnt/data/opencart_storage_data"
       }
     }
   }
@@ -148,8 +178,15 @@ resource "kubernetes_deployment" "mariadb" {
           }
 
           volume_mount {
-            name       = "mariadb-data"
+            name       = "mariadb-data-pv"
             mount_path = "/bitnami/mariadb"
+          }
+        }
+        volume {
+          name = "mariadb-data-pv"
+
+          persistent_volume_claim {
+            claim_name = "mariadb-data-pvc"
           }
         }
       }
@@ -184,10 +221,12 @@ resource "kubernetes_deployment" "opencart" {
           image = "docker.io/bitnami/opencart:4"
 
           port {
+            name = "http-port"
             container_port = 8080
           }
 
           port {
+            name = "https-port"
             container_port = 8443
           }
 
@@ -222,13 +261,25 @@ resource "kubernetes_deployment" "opencart" {
           }
 
           volume_mount {
-            name       = "opencart-data"
-            mount_path = "/bitnami/opencart"
+            name       = "opencart-data-pv"
+            mount_path = "/bitnami/opencart-pv"
           }
 
           volume_mount {
-            name       = "opencart-storage-data"
+            name       = "opencart-storage-data-pv"
             mount_path = "/bitnami/opencart_storage/"
+          }
+        }
+        volume {
+          name = "opencart-data-pv"
+          persistent_volume_claim {
+            claim_name = "opencart-data-pvc"
+          }
+        }
+        volume {
+          name = "opencart-storage-data-pv"
+          persistent_volume_claim {
+            claim_name = "opencart-storage-data-pvc"
           }
         }
       }
@@ -261,18 +312,20 @@ resource "kubernetes_service" "opencart" {
   }
 
   spec {
-    type = "LoadBalancer"
+    type = "NodePort"
     selector = {
       app = "opencart"
     }
 
     port {
+      name = "http-port"
       protocol = "TCP"
       port     = 80
       target_port = 8080
     }
 
     port {
+      name = "https-port"
       protocol = "TCP"
       port     = 443
       target_port = 8443
