@@ -61,7 +61,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: draginojd/jensenstore:00
+          tags: draginojd/jensenstore:${{ env.current_version }}
 
         #id: build
         #run: |
