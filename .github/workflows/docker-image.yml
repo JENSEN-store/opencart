@@ -38,7 +38,7 @@ jobs:
 
       - name: Generate Modified Deployment YAML
         run: |
-          sed -e "s/my-service00-deployment:/my-service:${{ env.current_version }}/g" deployment-minikube.yml > modified-deployment-minikube.yml
+          sed -e "s/jensenstore:1.0.0/jensenstore:${{ env.current_version }}/g" deployment-minikube.yml > modified-deployment-minikube.yml
 
       - name: Print Docker Images
         run: |
