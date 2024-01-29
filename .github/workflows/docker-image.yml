@@ -76,6 +76,7 @@ jobs:
         run: |
           kubectl apply -f deployment-minikube.yml
           kubectl apply -f docker-image.yml
+        working-directory: ${{ github.workspace }}
           
           
 
