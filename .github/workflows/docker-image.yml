@@ -72,6 +72,12 @@ jobs:
 
         #run: docker build -t draginojd/jensenstore:00 .
 
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f deployment-minikube.yml
+          kubectl apply -f docker-image.yml
+          
+          
 
       
 
