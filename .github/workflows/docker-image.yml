@@ -56,11 +56,19 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
-        id: build
-        run: |
-          echo "Building Docker image..."
-          output=$(docker build -t draginojd/jensenstore:00 . 2>&1) || true
-          echo "::set-output name=output::$output"
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+        #id: build
+        #run: |
+        # echo "Building Docker image..."
+         # output=$(docker build -t draginojd/jensenstore:00 . 2>&1) || true
+          
+         # echo "::set-output name=output::$output"
 
         #run: docker build -t draginojd/jensenstore:00 .
 
