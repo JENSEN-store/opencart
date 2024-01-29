@@ -61,8 +61,8 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: draginojd/jensenstore:00
+
         #id: build
         #run: |
         # echo "Building Docker image..."
