@@ -35,3 +35,7 @@ jobs:
       # and run all Cypress tests
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        with:
+          record: true
+          start: npm start  # Replace with your actual start script if needed
+          spec: cypress/integration/opencart_test.cy.js
