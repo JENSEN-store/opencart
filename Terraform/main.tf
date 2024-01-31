@@ -218,7 +218,7 @@ resource "kubernetes_deployment" "opencart" {
       spec {
         container {
           name  = "opencart"
-          image = "docker.io/bitnami/opencart:4"
+          image = "docker.io/draginojd/jensenstore:1.0.1"
 
           port {
             name = "http-port"
@@ -312,7 +312,7 @@ resource "kubernetes_service" "opencart" {
   }
 
   spec {
-    type = "NodePort"
+    type = "LoadBalancer"
     selector = {
       app = "opencart"
     }
