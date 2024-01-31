@@ -1,7 +1,7 @@
 describe('OpenCart CMS Test', () => {
   it('should select a product and add it to the cart', () => {
     // Visit the OpenCart demo site
-    cy.visit('http://localhost:8080/en-gb');
+    cy.visit('http://localhost/en-gb');
 
     // Navigate to the Desktops category
     cy.contains('Desktops').click();
