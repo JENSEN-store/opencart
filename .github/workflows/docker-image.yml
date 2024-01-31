@@ -79,7 +79,18 @@ jobs:
           kubectl apply -f opencartservice1.yml
         working-directory: ${{ github.workspace }}
 
-      - name: Check pods
+      - name: List our pods
+        run: |
+          kubectl get pods
+
+      - name: Wait for pods to be ready
+        run: |
+          chmod +x ./check_pods.sh
+          ./check_pods.sh
+        timeout-minutes: 15
+
+
+      - name: List our pods again
         run: |
           kubectl get pods
       
