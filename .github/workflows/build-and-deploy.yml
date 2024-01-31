@@ -1,12 +1,9 @@
-name: Build and Push Docker Image
+name: Build and Deploy Open Cart
 
 on:
   push:
     branches:
       - main
-  #pull_request:
-  # types:
-  #  - closed
 
 jobs:
   build_and_push:
@@ -31,52 +28,13 @@ jobs:
           export SHELL=/bin/bash
           eval $(minikube -p minikube docker-env)
 
-      - name: Print current app version
-        run: |
-          echo "current_version=$(grep '# version' version.md | cut -d ' ' -f3)" >> $GITHUB_ENV
-          echo "Current version: ${{ env.current_version }}"
-
-      - name: Generate Modified Deployment YAML
-        run: |
-          sed -e "s/jensenstore:1.0.0/jensenstore:${{ env.current_version }}/g" deployment-minikube.yml > modified-deployment-minikube.yml
-
-      - name: Print Docker Images
-        run: |
-          eval $(minikube -p minikube docker-env)
-          docker images
-        shell: bash
-
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v1.6.0 # Use the latest version
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1.10.0 # Use the latest version
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: draginojd/jensenstore:${{ env.current_version }}
-
-        #id: build
-        #run: |
-        # echo "Building Docker image..."
-        # output=$(docker build -t draginojd/jensenstore:00 . 2>&1) || true
-
-        # echo "::set-output name=output::$output"
-
-        #run: docker build -t draginojd/jensenstore:00 .
-
       - name: Deploy to Kubernetes amd create service
         run: |
           eval $(minikube -p minikube docker-env)
-          kubectl apply -f modified-deployment-minikube.yml
-          kubectl apply -f opencartservice1.yml
+          kubectl apply -f deployment-mariadb.yml
+          kubectl apply -f deployment-opencart.yml
+          kubectl apply -f service-mariadb.yml
+          kubectl apply -f service-opencart.yml
         working-directory: ${{ github.workspace }}
 
       - name: List our pods
@@ -103,10 +61,10 @@ jobs:
           sleep 30
           minikube service list
           echo "--------------OPENCART SERVICE DETAILS-----------------"
-          kubectl get service service1
+          kubectl get service opencart
           echo "--------------OPENENING THE SERVICE--------------------"
           echo
-          curl "$(minikube service service1 --url)/"
+          curl "$(minikube service opencart --url)/"
         shell: bash
         env:
           current_version: 1.0.1
