@@ -96,7 +96,6 @@ jobs:
           echo "--------------OPENCART SERVICE DETAILS-----------------"
           kubectl get service service1
           echo "--------------OPENENING THE SERVICE"--------------------"
-          echo
           curl "$(minikube service service1 --url)/"
 
 
