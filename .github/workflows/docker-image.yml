@@ -66,9 +66,9 @@ jobs:
         #id: build
         #run: |
         # echo "Building Docker image..."
-         # output=$(docker build -t draginojd/jensenstore:00 . 2>&1) || true
-          
-         # echo "::set-output name=output::$output"
+        # output=$(docker build -t draginojd/jensenstore:00 . 2>&1) || true
+
+        # echo "::set-output name=output::$output"
 
         #run: docker build -t draginojd/jensenstore:00 .
 
@@ -76,10 +76,9 @@ jobs:
         run: |
           kubectl apply -f deployment-minikube.yml
         working-directory: ${{ github.workspace }}
-          
-          
-
-      
+      - name: Check pods
+        run: |
+          kubectl get pods
 
       - name: Send build logs to Discord
         if: always()
