@@ -86,7 +86,7 @@ jobs:
       - name: Wait for pods to be ready
         run: |
           chmod +x check_pods.sh
-          /check_pods.sh
+          check_pods.sh
         timeout-minutes: 15
 
 
