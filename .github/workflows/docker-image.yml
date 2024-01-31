@@ -95,9 +95,12 @@ jobs:
           minikube service list
           echo "--------------OPENCART SERVICE DETAILS-----------------"
           kubectl get service service1
-          echo "--------------OPENENING THE SERVICE"--------------------"
+          echo "--------------OPENENING THE SERVICE--------------------"
+          echo
           curl "$(minikube service service1 --url)/"
-
+        shell: bash
+        env:
+          current_version: 1.0.1
 
 
       - name: Send build logs to Discord
