@@ -1,0 +1,78 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Start minikube
+        uses: medyagh/setup-minikube@master
+        id: minikube
+        with:
+          driver: docker
+          wait: all
+
+      - name: Try the cluster
+        run: kubectl get pods -A
+
+      - name: Setup Docker environment
+        run: |
+          export SHELL=/bin/bash
+          eval $(minikube -p minikube docker-env)
+
+      - name: Deploy to Kubernetes amd create service
+        run: |
+          eval $(minikube -p minikube docker-env)
+          kubectl apply -f deployment-mariadb.yml
+          kubectl apply -f deployment-opencart.yml
+          kubectl apply -f service-mariadb.yml
+          kubectl apply -f service-opencart.yml
+        working-directory: ${{ github.workspace }}
+
+      - name: List our pods
+        run: |
+          kubectl get pods
+
+      - name: Wait for pods to be ready
+        run: |
+          chmod +x ./check_pods.sh
+          ./check_pods.sh
+        timeout-minutes: 15
+
+      - name: List our pods again
+        run: |
+          kubectl get pods
+
+      - name: Double check service is created
+        run: |
+          kubectl get service
+
+      - name: Test service URL's
+        run: |
+          eval $(minikube -p minikube docker-env)
+          sleep 30
+          minikube service list
+          echo "--------------OPENCART SERVICE DETAILS-----------------"
+          kubectl get service service1
+          echo "--------------OPENENING THE SERVICE--------------------"
+          echo
+          curl "$(minikube service service1 --url)/"
+        shell: bash
+        env:
+          current_version: 1.0.1
+
+      - name: Send build logs to Discord
+        if: always()
+        run: |
+          echo "Sending build logs to Discord..."
+          curl -X POST -H "Content-Type: application/json" -d '{
+            "content": "Build Status: ${{ job.status }}\nCommit: ${{ github.sha }}\nRepository: ${{ github.repository }}\nOn: ${{ github.event_name }}\nJob: ${{ github.job }}\nWorkflow Run ID: ${{ github.run_id }}\n\nDetails:\n- This build was ${{ job.status }}.\n\nBuild Output:\n```\n'"${{ steps.build.outputs.output || steps.build.outputs.output }}"'\n```\n\nGitHub Actions build OPENCART STORE!"
+          }' ${{ secrets.DISCORD_WEBHOOK_URL }}

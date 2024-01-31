@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opencart-deployment
+  labels:
+    app: opencart
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: opencart
+  template:
+    metadata:
+      labels:
+        app: opencart
+    spec:
+      containers:
+        - name: opencart
+          image: docker.io/bitnami/opencart:4
+          env:
+            - name: OPENCART_HOST
+              value: "localhost"
+            - name: OPENCART_DATABASE_HOST
+              value: "mariadb"
+            - name: OPENCART_DATABASE_PORT_NUMBER
+              value: "3306"
+            - name: OPENCART_DATABASE_USER
+              value: "bn_opencart"
+            - name: OPENCART_DATABASE_NAME
+              value: "bitnami_opencart"
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 5001
