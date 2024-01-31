@@ -312,7 +312,7 @@ resource "kubernetes_service" "opencart" {
   }
 
   spec {
-    type = "LoadBalancer"
+    type = "NodePort"
     selector = {
       app = "opencart"
     }
