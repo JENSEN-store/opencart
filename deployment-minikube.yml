@@ -16,7 +16,6 @@ spec:
     spec:
       containers:
         - name: build-and-push
-          imagePullPolicy: Never
           image: draginojd/jensenstore:1.0.0
           ports:
             - containerPort: 5001
