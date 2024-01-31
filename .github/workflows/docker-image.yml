@@ -72,13 +72,34 @@ jobs:
 
         #run: docker build -t draginojd/jensenstore:00 .
 
-      - name: Deploy to Kubernetes
+      - name: Deploy to Kubernetes amd create service
         run: |
+          eval $(minikube -p minikube docker-env)
           kubectl apply -f deployment-minikube.yml
+          kubectl apply -f opencartservice1.yml
         working-directory: ${{ github.workspace }}
+
       - name: Check pods
         run: |
           kubectl get pods
+      
+      
+      - name: Double check service is created
+        run: | 
+          kubectl get service
+          
+      - name: Test service URL's
+        run: | 
+          eval $(minikube -p minikube docker-env)
+          sleep 30
+          minikube service list
+          echo "--------------OPENCART SERVICE DETAILS-----------------"
+          kubectl get service service1
+          echo "--------------OPENENING THE SERVICE"--------------------"
+          echo
+          curl $(minikube service service1 --url)/
+
+
 
       - name: Send build logs to Discord
         if: always()
