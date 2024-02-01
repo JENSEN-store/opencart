@@ -1,7 +1,7 @@
 # Define Kubernetes Deployment resources
-resource "kubernetes_deployment" "mariadb" {
+resource "kubernetes_deployment" "mariadb_deployment" {
   metadata {
-    name = "mariadb"
+    name = "mariadb-deployment"
   }
 
   spec {
@@ -57,9 +57,9 @@ resource "kubernetes_deployment" "mariadb" {
   }
 }
 
-resource "kubernetes_deployment" "opencart" {
+resource "kubernetes_deployment" "opencart_deployment" {
   metadata {
-    name = "opencart"
+    name = "opencart-deployment"
   }
 
   spec {
@@ -151,9 +151,9 @@ resource "kubernetes_deployment" "opencart" {
 }
 
 # Define Kubernetes Service resources
-resource "kubernetes_service" "mariadb" {
+resource "kubernetes_service" "mariadb_service" {
   metadata {
-    name = "mariadb"
+    name = "mariadb-service"
   }
 
   spec {
@@ -169,13 +169,13 @@ resource "kubernetes_service" "mariadb" {
   }
 }
 
-resource "kubernetes_service" "opencart" {
+resource "kubernetes_service" "opencart_service" {
   metadata {
-    name = "opencart"
+    name = "opencart-service"
   }
 
   spec {
-    type = "NodePort"
+    type = "ClusterIP"
     selector = {
       app = "opencart"
     }
@@ -183,8 +183,15 @@ resource "kubernetes_service" "opencart" {
     port {
       name = "http-port"
       protocol = "TCP"
-      port     = 8080
+      port     = 80
       target_port = 80
+    }
+
+    port {
+      name = "https-port"
+      protocol = "TCP"
+      port = 443
+      target_port = 8443
     }
   }
 }

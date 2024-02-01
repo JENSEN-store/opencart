@@ -3,14 +3,13 @@ resource "kubernetes_ingress_v1" "opencart" {
     name = "opencart-ingress"
     annotations = {
       "kubernetes.io/ingress.class" = "nginx"
-
     }
   }
 
   spec {
     default_backend {
       service {
-        name = "opencart"
+        name = "opencart-service"
         port {
           number = 80
         }
@@ -24,7 +23,7 @@ resource "kubernetes_ingress_v1" "opencart" {
           path = "/*"
           backend {
             service {
-              name = "opencart"
+              name = "opencart-service"
               port {
                 number = 80
               }
