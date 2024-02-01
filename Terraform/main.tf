@@ -183,8 +183,8 @@ resource "kubernetes_service" "opencart" {
     port {
       name = "http-port"
       protocol = "TCP"
-      port     = 80
-      target_port = 8080
+      port     = 8080
+      target_port = 80
     }
   }
 }
