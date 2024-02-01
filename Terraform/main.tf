@@ -323,13 +323,6 @@ resource "kubernetes_service" "opencart" {
       port     = 80
       target_port = 8080
     }
-
-    port {
-      name = "https-port"
-      protocol = "TCP"
-      port     = 443
-      target_port = 8443
-    }
   }
 }
 
@@ -338,6 +331,7 @@ resource "kubernetes_ingress_v1" "opencart" {
     name = "opencart-ingress"
     annotations = {
       "kubernetes.io/ingress.class" = "nginx"
+
     }
   }
 
@@ -370,7 +364,17 @@ resource "kubernetes_ingress_v1" "opencart" {
 
     tls {
       hosts = ["opencart.jamjarlid.com"]
-      secret_name = "opencart-tls-secret"
+      secret_name = "opencart-secret"
     }
+  }
+}
+
+resource "kubernetes_secret" "opencart_secret" {
+  metadata {
+    name = "opencart-secret"
+  }
+  data = {
+    "tls.crt" = base64encode(file("../tls.crt"))
+    "tls.key" = base64encode(file("../tls.key"))
   }
 }
