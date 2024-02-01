@@ -33,6 +33,10 @@ override.tf.json
 .terraformrc
 terraform.rc
 Terraform/.terraform.lock.hcl
+
+#Ignore node.js files
 /node_modules
+
+#Ignore server-specific TLS keys and certificates
 tls.key
 tls.crt
