@@ -57,11 +57,12 @@ jobs:
       - name: Test service URL's
         run: |
           eval $(minikube -p minikube docker-env)
-          minikube service list
-          echo "--------------OPENCART SERVICE DETAILS-----------------"
-          kubectl get service opencart
-          echo "--------------OPENENING THE SERVICE--------------------"
-          echo
+          sudo cat /etc/hosts
+          # minikube service list
+          # echo "--------------OPENCART SERVICE DETAILS-----------------"
+          # kubectl get service opencart
+          # echo "--------------OPENENING THE SERVICE--------------------"
+          # echo
           curl opencart.local
         shell: bash
         env:
