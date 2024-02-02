@@ -62,7 +62,8 @@ jobs:
           kubectl get service opencart
           echo "--------------OPENENING THE SERVICE--------------------"
           echo
-          # curl opencart.local:8080
+          sleep 30
+          curl opencart.local:8080
         shell: bash
         env:
           current_version: 1.0.1
