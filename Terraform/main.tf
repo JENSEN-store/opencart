@@ -85,12 +85,12 @@ resource "kubernetes_deployment" "opencart_deployment" {
 
           port {
             name = "http-port"
-            container_port = 8080
+            container_port = 80
           }
 
           port {
             name = "https-port"
-            container_port = 8443
+            container_port = 443
           }
 
           env {
@@ -191,7 +191,7 @@ resource "kubernetes_service" "opencart_service" {
       name = "https-port"
       protocol = "TCP"
       port = 443
-      target_port = 8443
+      target_port = 443
     }
   }
 }

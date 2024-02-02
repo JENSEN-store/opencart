@@ -7,6 +7,7 @@ resource "kubernetes_ingress_v1" "opencart" {
   }
 
   spec {
+    ingress_class_name = "nginx"
     default_backend {
       service {
         name = "opencart-service"
@@ -45,7 +46,7 @@ resource "kubernetes_secret" "opencart_secret" {
     name = "opencart-secret"
   }
   data = {
-    "tls.crt" = base64encode(file("../tls.crt"))
-    "tls.key" = base64encode(file("../tls.key"))
+    "tls.crt" = ("../tls.crt")
+    "tls.key" = ("../tls.key")
   }
 }
