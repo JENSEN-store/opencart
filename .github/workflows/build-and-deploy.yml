@@ -8,19 +8,19 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Edit hosts file
-        run: sudo echo "$(minikube ip) opencart.local" | sudo tee -a /etc/hosts
       - name: Start minikube
         uses: medyagh/setup-minikube@master
         id: minikube
         with:
           driver: docker
           wait: all
-
+      - name: Edit hosts file
+        run: sudo echo "$(minikube ip) opencart.local" | sudo tee -a /etc/hosts
+      - name: Check hosts file
+        run: sudo cat /etc/hosts
       - name: Try the cluster
         run: kubectl get pods -A
 
