@@ -1,144 +1,7 @@
-# Define Kubernetes Persistent Volume resources
-resource "kubernetes_persistent_volume" "mariadb_data" {
-  metadata {
-    name = "mariadb-data-pv"
-  }
-
-  spec {
-    node_affinity {
-      required {
-        node_selector_term {
-          match_expressions {
-            key = "name"
-            operator = "Exists"
-          }
-        }
-      }
-    }
-    capacity = {
-      storage = "5Gi"
-    }
-
-    access_modes = ["ReadWriteMany"]
-
-    persistent_volume_source {
-      local {
-        path = "/mnt/data/mariadb_data"
-      }
-    }
-  }
-}
-
-resource "kubernetes_persistent_volume" "opencart_data" {
-  metadata {
-    name = "opencart-data-pv"
-  }
-
-  spec {
-    node_affinity {
-      required {
-        node_selector_term {
-          match_expressions {
-            key = "name"
-            operator = "Exists"
-          }
-        }
-      }
-    }
-    capacity = {
-      storage = "5Gi"
-    }
-
-    access_modes = ["ReadWriteMany"]
-
-    persistent_volume_source {
-      local {
-        path = "/mnt/data/opencart_data"
-      }
-    }
-  }
-}
-
-resource "kubernetes_persistent_volume" "opencart_storage_data" {
-  metadata {
-    name = "opencart-storage-data-pv"
-  }
-
-  spec {
-    node_affinity {
-      required {
-        node_selector_term {
-          match_expressions {
-            key = "name"
-            operator = "Exists"
-          }
-        }
-      }
-    }
-    capacity = {
-      storage = "5Gi"
-    }
-
-    access_modes = ["ReadWriteMany"]
-
-    persistent_volume_source {
-      local {
-        path = "/mnt/data/opencart_storage_data"
-      }
-    }
-  }
-}
-
-# Define Kubernetes Persistent Volume Claim resources
-resource "kubernetes_persistent_volume_claim" "mariadb_data" {
-  metadata {
-    name = "mariadb-data-pvc"
-  }
-
-  spec {
-    access_modes = ["ReadWriteMany"]
-    resources {
-      requests = {
-        storage = "1Gi"
-      }
-    }
-  }
-}
-
-resource "kubernetes_persistent_volume_claim" "opencart_data" {
-  metadata {
-    name = "opencart-data-pvc"
-  }
-
-  spec {
-    access_modes = ["ReadWriteMany"]
-    resources {
-      requests = {
-        storage = "5Gi"
-      }
-    }
-  }
-}
-
-resource "kubernetes_persistent_volume_claim" "opencart_storage_data" {
-  metadata {
-    name = "opencart-storage-data-pvc"
-  }
-
-  spec {
-    access_modes = ["ReadWriteMany"]
-    resources {
-      requests = {
-        storage = "5Gi"
-      }
-    }
-  }
-}
-
 # Define Kubernetes Deployment resources
-resource "kubernetes_deployment" "mariadb" {
+resource "kubernetes_deployment" "mariadb_deployment" {
   metadata {
-    name = "mariadb"
+    name = "mariadb-deployment"
   }
 
   spec {
@@ -194,9 +57,9 @@ resource "kubernetes_deployment" "mariadb" {
   }
 }
 
-resource "kubernetes_deployment" "opencart" {
+resource "kubernetes_deployment" "opencart_deployment" {
   metadata {
-    name = "opencart"
+    name = "opencart-deployment"
   }
 
   spec {
@@ -288,9 +151,9 @@ resource "kubernetes_deployment" "opencart" {
 }
 
 # Define Kubernetes Service resources
-resource "kubernetes_service" "mariadb" {
+resource "kubernetes_service" "mariadb_service" {
   metadata {
-    name = "mariadb"
+    name = "mariadb-service"
   }
 
   spec {
@@ -306,13 +169,13 @@ resource "kubernetes_service" "mariadb" {
   }
 }
 
-resource "kubernetes_service" "opencart" {
+resource "kubernetes_service" "opencart_service" {
   metadata {
-    name = "opencart"
+    name = "opencart-service"
   }
 
   spec {
-    type = "NodePort"
+    type = "ClusterIP"
     selector = {
       app = "opencart"
     }
@@ -321,13 +184,13 @@ resource "kubernetes_service" "opencart" {
       name = "http-port"
       protocol = "TCP"
       port     = 80
-      target_port = 8080
+      target_port = 80
     }
 
     port {
       name = "https-port"
       protocol = "TCP"
-      port     = 443
+      port = 443
       target_port = 8443
     }
   }
