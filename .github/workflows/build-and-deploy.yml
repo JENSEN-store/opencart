@@ -34,7 +34,6 @@ jobs:
           eval $(minikube -p minikube docker-env)
           kubectl apply -f deployment-mariadb.yml
           kubectl apply -f deployment-opencart.yml
-          kubectl apply -f service-mariadb.yml
         working-directory: ${{ github.workspace }}
 
       - name: List our pods
