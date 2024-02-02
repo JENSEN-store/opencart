@@ -46,7 +46,7 @@ resource "kubernetes_secret" "opencart_secret" {
     name = "opencart-secret"
   }
   data = {
-    "tls.crt" = ("../tls.crt")
-    "tls.key" = ("../tls.key")
+    "tls.crt" = file("../tls.crt")
+    "tls.key" = file("../tls.key")
   }
 }
