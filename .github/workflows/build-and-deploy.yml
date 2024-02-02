@@ -63,7 +63,7 @@ jobs:
           echo "--------------OPENENING THE SERVICE--------------------"
           echo
           sleep 30
-          curl opencart.local:8080
+          curl http://opencart.local:8080
         shell: bash
         env:
           current_version: 1.0.1
