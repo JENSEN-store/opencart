@@ -1,5 +1,11 @@
 version: "2"
 services:
+  apache-exporter:
+    image: bitnami/apache-exporter:latest
+    ports:
+      - 9117:9117
+    command:
+      - --scrape_uri=http://localhost/server-status/?auto --insecure=false --telemetry.address=:9117 -telemetry.endpoint=/metrics
   mariadb:
     image: docker.io/bitnami/mariadb:11.2
     environment:
@@ -24,6 +30,7 @@ services:
     volumes:
       - "opencart_data:/bitnami/opencart"
       - "opencart_storage_data:/bitnami/opencart_storage/"
+      - ./apache/httpd.conf:/opt/bitnami/apache/conf/httpd.conf
     depends_on:
       - mariadb
 
