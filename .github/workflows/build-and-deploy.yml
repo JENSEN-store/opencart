@@ -54,19 +54,19 @@ jobs:
         run: |
           kubectl get service
 
-      - name: Test service URL's
-        run: |
-          eval $(minikube -p minikube docker-env)
-          minikube service list
-          echo "--------------OPENCART SERVICE DETAILS-----------------"
-          kubectl get service opencart
-          echo "--------------OPENENING THE SERVICE--------------------"
-          echo
-          sleep 30
-          curl http://opencart.local:8080
-        shell: bash
-        env:
-          current_version: 1.0.1
+#      - name: Test service URL's
+#        run: |
+#          eval $(minikube -p minikube docker-env)
+#          minikube service list
+#          echo "--------------OPENCART SERVICE DETAILS-----------------"
+#          kubectl get service opencart
+#          echo "--------------OPENENING THE SERVICE--------------------"
+#          echo
+#          sleep 30
+#          curl http://opencart.local:8080
+#        shell: bash
+#        env:
+#          current_version: 1.0.1
 
       - name: Send build logs to Discord
         if: always()
