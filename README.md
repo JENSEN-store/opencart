@@ -21,6 +21,7 @@ Docker Compose: Install Docker Compose, which is a tool for defining and running
 ```
 git clone https://github.com/bitnami/bitnami-docker-opencart.git
 ```
+
 Use code with caution. Learn more
 
 #### Change directory to the cloned repository:
@@ -28,6 +29,7 @@ Use code with caution. Learn more
 ```
 cd bitnami-docker-opencart
 ```
+
 Use code with caution. Learn more
 
 #### Create a .env file and add the following environment variables:
@@ -40,6 +42,7 @@ OPENCART_ADMIN_PASSWORD=password
 ```
 docker-compose up -d
 ```
+
 Use code with caution. Learn more
 
 #### Open the OpenCart demo store in your web browser by navigating to http://localhost:8080.
@@ -52,9 +55,9 @@ Once the OpenCart demo site is running, you can access it in your web browser by
 
 ## Kubernetes Deployment
 
-This instance of OpenCart has also been deployed on an Ubuntu server running a **microK8s** single node cluster. The manifests needed to deploy to the cluster were provided through **Terraform**, with some additional config needed.
+This instance of OpenCart has also been deployed on an Ubuntu server running a **microK8s** single node cluster. The manifests needed to deploy to the cluster were provided through **Terraform**, with some additional config needed. The guide assumes a basic knowledge of Kubernetes. 
 
-### Creating the cluster:
+### Creating and Deploying the Cluster:
 
 The **microK8s** cluster was created using the documentation provided by their [website](https://microk8s.io/docs), along with some additional configurations, described below:
 
@@ -62,8 +65,19 @@ The **microK8s** cluster was created using the documentation provided by their [
 
 After installing **microK8s**, the following steps were taken:
 
+#### Open firewall ports
+
+In order for all the services and addons to work properly, some ports need to be opened. The ports needed are listed in the [microK8s documentation](https://microk8s.io/docs/services-and-ports).
+
+These ports were then opened in the firewall using:
+```
+ufw allow [PORT_NUMBER]
+```
+
 #### Set context
+
 In order to set kubectl context to microk8s, run the following commands:
+
 ```
 cd ~/.kube
 microk8s config > config
@@ -74,16 +88,35 @@ microk8s config > config
 ```
 microk8s enable cert-manager dns ingress metallb:[HOST_IP-HOST_IP]
 ```
-The mentioned addons provide you with the ability to run an NGINX Controller index and Load Balancer, as well as TLS certificates for your deployment. The `HOST_IP` variable relates to the IP-address of the host machine, used to relay traffic into the pods. 
 
+The mentioned addons provide you with the ability to run an NGINX Controller index and Load Balancer, as well as TLS certificates for your deployment. The `HOST_IP` variable relates to the IP-address of the host machine, used to relay traffic into the pods.
 
 #### Create Cluster Issuer
-A Cluster issuer is needed in order to get the TLS certificate, which can be applied using [K8s-manifests/letsencrypt.yml](https://github.com/JENSEN-store/opencart/blob/217860c63d3ad0d2d73d51268979df723d8de58b/K8s-manifests/letsencrypt.yml)
+
+A Cluster issuer is needed in order to get the TLS certificate, which can be applied using [K8s-manifests/letsencrypt.yml](https://github.com/JENSEN-store/opencart/blob/217860c63d3ad0d2d73d51268979df723d8de58b/K8s-manifests/letsencrypt.yml). Before applying, change the email address to a valid personal one.
 
 ```
 kubectl apply -f K8s-manifests/letsencrypt.yml
 ```
 
+#### Expose NGINX Controller
+
+In order to successfully use the NGINX Controller as a Load Balancer, we need to expose the pod, which can be done using the following command:
+
+```
+kubectl get pods -n ingress
+kubectl expose pod [POD_NAME] --port 80 --type LoadBalancer -n ingress
+```
+`POD_NAME` refers to the name of the nginx controller pod, which is shown by the first command. 
+
+#### Terraform Plan and Apply
+When the **microK8s** cluster is configured to your liking, the terraform script can be run:
+
+```
+terraform init
+terraform plan
+terraform apply
+```
 
 ## Build and Deploy workflow
 
