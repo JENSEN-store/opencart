@@ -3,6 +3,7 @@ resource "kubernetes_ingress_v1" "opencart" {
     name = "opencart-ingress"
     annotations = {
       "kubernetes.io/ingress.class" = "nginx"
+      "cert-manager.io/cluster-issuer" = "lets-encrypt"
     }
   }
 
