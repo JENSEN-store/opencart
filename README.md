@@ -45,4 +45,48 @@ Log in to the OpenCart admin panel using the credentials you set in the .env fil
 **Accessing the OpenCart Demo Store**
 Once the OpenCart demo site is running, you can access it in your web browser by navigating to http://localhost:8080. You will be presented with the OpenCart homepage.
 
-@@Build and Deploy workflow@@
+
+**Build and Deploy workflow**
+
+The build and deploy workflow triggers at the moment on every push to main branch but have out commented trigger on every pull request. 
+
+  # What the workflow do:
+
+  # 1. Check out repository
+      Checking out, syncing & fetching the repository
+
+  # 2. Start minikube
+      Starting up minikube with the docker driver
+```diff
+----3. Edit host file
+      This step passes but have issues. It is only working in local but but does not want to connect
+      us later on port 8080(our chosen port) due to Githubs strict policy rules.
+      The part that is failing is commented out in the build-and-deploy.yml file.
+```
+  # 4. Check hosts file
+      Checking that the host file changes we did took place.
+  
+  # 5. Try the cluster
+      Checking that the pods exist/is running by running "kubectl get pods -A"
+  
+  # 6. Setup Docker Environment
+      Logging into minikube with docker environment
+  
+  # 7. Deploy to kubernetes and create service
+      Starting minikube and deploying mariadb and opencart to the cluster
+  
+  # 8. List our pods
+      Listing our pods we created
+  
+  # 9. Waiting for pods to be ready
+      Running the check_pod.sh script to wait until the pods is ready
+
+  # 10. List our pods again
+      Listing our pods again to see that they are ready
+
+  # 11. Double Check that the service is created
+      Double checking that the services is created
+  
+  # 12. Send build logs to Discord
+      Sending status and log created by the build to a Discord bot that displays 
+      it as a message in a chosen channel on a chosen discord server.

@@ -33,7 +33,7 @@ jobs:
           export SHELL=/bin/bash
           eval $(minikube -p minikube docker-env)
 
-      - name: Deploy to Kubernetes amd create service
+      - name: Deploy to Kubernetes and create service
         run: |
           eval $(minikube -p minikube docker-env)
           kubectl apply -f deployment-mariadb.yml
