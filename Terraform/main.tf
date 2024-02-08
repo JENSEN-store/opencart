@@ -160,6 +160,7 @@ resource "kubernetes_service" "mariadb_service" {
     selector = {
       app = "mariadb"
     }
+    cluster_ip = "10.152.183.20"
 
     port {
       protocol = "TCP"
@@ -179,7 +180,6 @@ resource "kubernetes_service" "opencart_service" {
     selector = {
       app = "opencart"
     }
-    cluster_ip = "10.152.183.20"
 
     port {
       name = "http-port"
