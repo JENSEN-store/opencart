@@ -85,22 +85,22 @@ resource "kubernetes_deployment" "opencart_deployment" {
 
           port {
             name = "http-port"
-            container_port = 8080
+            container_port = 80
           }
 
           port {
             name = "https-port"
-            container_port = 8443
+            container_port = 443
           }
 
           env {
             name  = "OPENCART_HOST"
-            value = "localhost"
+            value = "opencart.jamjarlid.com"
           }
 
           env {
             name  = "OPENCART_DATABASE_HOST"
-            value = "mariadb"
+            value = "10.152.183.20"
           }
 
           env {
@@ -179,6 +179,7 @@ resource "kubernetes_service" "opencart_service" {
     selector = {
       app = "opencart"
     }
+    cluster_ip = "10.152.183.20"
 
     port {
       name = "http-port"
@@ -191,7 +192,7 @@ resource "kubernetes_service" "opencart_service" {
       name = "https-port"
       protocol = "TCP"
       port = 443
-      target_port = 8443
+      target_port = 443
     }
   }
 }
