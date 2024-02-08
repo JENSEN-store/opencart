@@ -2,7 +2,7 @@ resource "kubernetes_ingress_v1" "opencart" {
   metadata {
     name = "opencart-ingress"
     annotations = {
-      "kubernetes.io/ingress.class" = "nginx"
+      "kubernetes.io/ingress.class" = "public"
       "cert-manager.io/cluster-issuer" = "lets-encrypt"
     }
   }
