@@ -1,7 +1,7 @@
 # Define Kubernetes Deployment resources
-resource "kubernetes_deployment" "mariadb_deployment" {
+resource "kubernetes_deployment" "opencart_deployment" {
   metadata {
-    name = "mariadb-deployment"
+    name = "opencart-deployment"
   }
 
   spec {
@@ -9,14 +9,14 @@ resource "kubernetes_deployment" "mariadb_deployment" {
 
     selector {
       match_labels = {
-        app = "mariadb"
+        app = "opencart"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "mariadb"
+          app = "opencart"
         }
       }
 
@@ -44,41 +44,7 @@ resource "kubernetes_deployment" "mariadb_deployment" {
             name       = "mariadb-data-pv"
             mount_path = "/bitnami/mariadb"
           }
-        }
-        volume {
-          name = "mariadb-data-pv"
-
-          persistent_volume_claim {
-            claim_name = "mariadb-data-pvc"
-          }
-        }
-      }
-    }
-  }
-}
-
-resource "kubernetes_deployment" "opencart_deployment" {
-  metadata {
-    name = "opencart-deployment"
-  }
-
-  spec {
-    replicas = 1
-
-    selector {
-      match_labels = {
-        app = "opencart"
-      }
-    }
-
-    template {
-      metadata {
-        labels = {
-          app = "opencart"
-        }
-      }
-
-      spec {
+        } 
         container {
           name  = "opencart"
           image = "docker.io/draginojd/jensenstore:1.0.1"
@@ -100,7 +66,7 @@ resource "kubernetes_deployment" "opencart_deployment" {
 
           env {
             name  = "OPENCART_DATABASE_HOST"
-            value = "10.152.183.20"
+            value = "mariadb"
           }
 
           env {
@@ -145,30 +111,19 @@ resource "kubernetes_deployment" "opencart_deployment" {
             claim_name = "opencart-storage-data-pvc"
           }
         }
+        volume {
+          name = "mariadb-data-pv"
+
+          persistent_volume_claim {
+            claim_name = "mariadb-data-pvc"
+          }
+        }
       }
     }
   }
 }
 
 # Define Kubernetes Service resources
-resource "kubernetes_service" "mariadb_service" {
-  metadata {
-    name = "mariadb-service"
-  }
-
-  spec {
-    selector = {
-      app = "mariadb"
-    }
-
-    port {
-      protocol = "TCP"
-      port     = 3306
-      target_port = 3306
-    }
-  }
-}
-
 resource "kubernetes_service" "opencart_service" {
   metadata {
     name = "opencart-service"
@@ -179,7 +134,6 @@ resource "kubernetes_service" "opencart_service" {
     selector = {
       app = "opencart"
     }
-    cluster_ip = "10.152.183.20"
 
     port {
       name = "http-port"
@@ -193,6 +147,12 @@ resource "kubernetes_service" "opencart_service" {
       protocol = "TCP"
       port = 443
       target_port = 443
+    }
+    port {
+      name = "mariadb-port"
+      protocol = "TCP"
+      port     = 3306
+      target_port = 3306
     }
   }
 }
