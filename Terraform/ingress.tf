@@ -2,13 +2,13 @@ resource "kubernetes_ingress_v1" "opencart" {
   metadata {
     name = "opencart-ingress"
     annotations = {
-      "kubernetes.io/ingress.class" = "public"
+      "kubernetes.io/ingress.class" = "nginx"
       "cert-manager.io/cluster-issuer" = "lets-encrypt"
     }
   }
 
   spec {
-    ingress_class_name = "public"
+    ingress_class_name = "nginx"
     default_backend {
       service {
         name = "opencart-service"
