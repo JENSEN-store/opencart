@@ -8,7 +8,7 @@ resource "kubernetes_ingress_v1" "opencart" {
   }
 
   spec {
-    ingress_class_name = "nginx"
+    ingress_class_name = "public"
     default_backend {
       service {
         name = "opencart-service"
