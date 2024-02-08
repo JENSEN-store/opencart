@@ -36,17 +36,7 @@ resource "kubernetes_ingress_v1" "opencart" {
 
     tls {
       hosts = ["opencart.jamjarlid.com"]
-      secret_name = "opencart-secret"
+      secret_name = "letsencrypt-microk8s"
     }
   }
-}
-
-resource "kubernetes_secret" "opencart_secret" {
-  metadata {
-    name = "opencart-secret"
-  }
-  # data = {
-  #   "tls.crt" = file("../tls.crt")
-  #   "tls.key" = file("../tls.key")
-  # }
 }
