@@ -95,12 +95,12 @@ resource "kubernetes_deployment" "opencart_deployment" {
 
           env {
             name  = "OPENCART_HOST"
-            value = "localhost"
+            value = "opencart.jamjarlid.com"
           }
 
           env {
             name  = "OPENCART_DATABASE_HOST"
-            value = "mariadb"
+            value = "10.152.183.20"
           }
 
           env {
@@ -179,6 +179,7 @@ resource "kubernetes_service" "opencart_service" {
     selector = {
       app = "opencart"
     }
+    cluster_ip = "10.152.183.20"
 
     port {
       name = "http-port"
