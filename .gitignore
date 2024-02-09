@@ -40,3 +40,7 @@ Terraform/.terraform.lock.hcl
 #Ignore server-specific TLS keys and certificates
 tls.key
 tls.crt
+
+.tfvars
+/cypress/screenshots
+*.db
