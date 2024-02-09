@@ -15,25 +15,30 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+
       - name: Start minikube
         uses: medyagh/setup-minikube@master
         id: minikube
         with:
           driver: docker
           wait: all
+
       - name: Try the cluster
         run: kubectl get pods -A
+
       - name: Setup Docker environment
         run: |
           export SHELL=/bin/bash
           eval $(minikube -p minikube docker-env)
+
       - name: Print current app version
         run: |
           echo "current_version=$(grep '# version' version.md | cut -d ' ' -f3)" >> $GITHUB_ENV
           echo "Current version: ${{ env.current_version }}"
+
       - name: Generate Modified Deployment YAML
         run: |
-          sed -e "s/my-service00-deployment:/my-service:${{ env.current_version }}/g" deployment-minikube.yml > modified-deployment-minikube.yml
+          sed -e "s/jensenstore:1.0.0/jensenstore:${{ env.current_version }}/g" deployment-minikube.yml > modified-deployment-minikube.yml
 
       - name: Print Docker Images
         run: |
@@ -51,4 +56,65 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
-        run: docker build -t draginojd/jensenstore:00 .
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: draginojd/jensenstore:${{ env.current_version }}
+
+        #id: build
+        #run: |
+        # echo "Building Docker image..."
+        # output=$(docker build -t draginojd/jensenstore:00 . 2>&1) || true
+
+        # echo "::set-output name=output::$output"
+
+        #run: docker build -t draginojd/jensenstore:00 .
+
+      - name: Deploy to Kubernetes amd create service
+        run: |
+          eval $(minikube -p minikube docker-env)
+          kubectl apply -f modified-deployment-minikube.yml
+          kubectl apply -f opencartservice1.yml
+        working-directory: ${{ github.workspace }}
+
+      - name: List our pods
+        run: |
+          kubectl get pods
+
+      - name: Wait for pods to be ready
+        run: |
+          chmod +x ./check_pods.sh
+          ./check_pods.sh
+        timeout-minutes: 15
+
+      - name: List our pods again
+        run: |
+          kubectl get pods
+
+      - name: Double check service is created
+        run: |
+          kubectl get service
+
+      - name: Test service URL's
+        run: |
+          eval $(minikube -p minikube docker-env)
+          sleep 30
+          minikube service list
+          echo "--------------OPENCART SERVICE DETAILS-----------------"
+          kubectl get service service1
+          echo "--------------OPENENING THE SERVICE--------------------"
+          echo
+          curl "$(minikube service service1 --url)/"
+        shell: bash
+        env:
+          current_version: 1.0.1
+
+      - name: Send build logs to Discord
+        if: always()
+        run: |
+          echo "Sending build logs to Discord..."
+          curl -X POST -H "Content-Type: application/json" -d '{
+            "content": "Build Status: ${{ job.status }}\nCommit: ${{ github.sha }}\nRepository: ${{ github.repository }}\nOn: ${{ github.event_name }}\nJob: ${{ github.job }}\nWorkflow Run ID: ${{ github.run_id }}\n\nDetails:\n- This build was ${{ job.status }}.\n\nBuild Output:\n```\n'"${{ steps.build.outputs.output || steps.build.outputs.output }}"'\n```\n\nGitHub Actions build OPENCART STORE!"
+          }' ${{ secrets.DISCORD_WEBHOOK_URL }}

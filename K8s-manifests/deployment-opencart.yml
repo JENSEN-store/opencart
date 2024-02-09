@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opencart-deployment
+  labels:
+    app: opencart
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: opencart
+  template:
+    metadata:
+      labels:
+        app: opencart
+    spec:
+      containers:
+        - name: opencart
+          image: docker.io/bitnami/opencart:4
+          env:
+            - name: OPENCART_HOST
+              value: "localhost"
+            - name: OPENCART_DATABASE_HOST
+              value: "mariadb"
+            - name: OPENCART_DATABASE_PORT_NUMBER
+              value: "3306"
+            - name: OPENCART_DATABASE_USER
+              value: "bn_opencart"
+            - name: OPENCART_DATABASE_NAME
+              value: "bitnami_opencart"
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opencart
+spec:
+  type: NodePort
+  selector:
+    app: opencart
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: opencart-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: opencart-ingress
+  rules:
+  - host: opencart.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: opencart
+            port:
+              number: 8080
