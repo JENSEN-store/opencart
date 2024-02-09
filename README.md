@@ -1,13 +1,3 @@
-#### TEAM CONTRIBUTIONS #####
-# Armin = I have created this files without team members helps docker-image.yml, build-and-deploy.yml, disc-webhook, Deployment-mariadb.yml, deployment-opencart.yml , build-and-deploy.yml workflow documentation. I have also help a little with cypress tests.
-
-# Espen =
-
-# Hanway =
-
-# Swakshar =
-
-
 # opencart
 
 Setting Up the OpenCart Demo Site
