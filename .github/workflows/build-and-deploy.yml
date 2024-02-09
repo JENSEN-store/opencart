@@ -36,8 +36,8 @@ jobs:
       - name: Deploy to Kubernetes and create service
         run: |
           eval $(minikube -p minikube docker-env)
-          kubectl apply -f deployment-mariadb.yml
-          kubectl apply -f deployment-opencart.yml
+          kubectl apply -f ./K8s-manifests/deployment-mariadb.yml
+          kubectl apply -f ./K8s-manifests/deployment-opencart.yml
         working-directory: ${{ github.workspace }}
 
       - name: List our pods
